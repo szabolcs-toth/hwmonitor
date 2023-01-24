@@ -3,7 +3,7 @@ import psutil
 import serial
 
 #pySerial settings
-ser = serial.Serial("COM4", 9600, timeout = 1)                                           #make instance of Serial
+ser = serial.Serial("/dev/ttyUSB1", 9600, timeout = 1)                                           #make instance of Serial
 
 #system info that doesnt need to be refreshed
 coreCount = psutil.cpu_count(logical = False)                   #get number of PHYSICAL cores
@@ -17,8 +17,8 @@ else:
 while(1):                                                       #infinite loop, we dont want to stop this program.. and dont worry, it will not consume lot of resources, read next line to understand why
     cpu = psutil.cpu_percent(interval=1.2)                      #get usage of CPU in percentage with interval of 1.2s (that actually slow our entire code to be executed once in 1.2s so thats why ^ works). 1.2s is set due to Arduinos serial buffer being pretty slow and it takes a lot of time to read from it.. also it takes time to redraw the OLED and NOTHING below 1.2s will properly work (at least on Arduino UNO)
     mem = psutil.virtual_memory().percent                       #get usage of RAM in percentage
-    sdd = 100-psutil.disk_usage("C:").percent                   #get used space of C: disk (in my case SSD); since we get USED space, we need to substract it from 100(%) and we got FREE space
-    hdd = 100-psutil.disk_usage("D:").percent                   #   XXX    the same here, i have 2 drives (SSD and HDD)
+    sdd = 100-psutil.disk_usage("/share/media").percent                   #get used space of C: disk (in my case SSD); since we get USED space, we need to substract it from 100(%) and we got FREE space
+    hdd = 100-psutil.disk_usage("/share/public").percent                   #   XXX    the same here, i have 2 drives (SSD and HDD)
                                                                 #we need to parse floats (decimal numbers from psutil) to strings
     if cpu < 10:
         cpuStr = "  " + str(cpu)                                #if CPU usage is under 10%, put 2 artificial characters (spaces) before the value.. as i mentioned, i set every information to be 5 characters including parenthesis and/or decimal places, so we need to fill resot of the space with spaces (also, its prettier)
